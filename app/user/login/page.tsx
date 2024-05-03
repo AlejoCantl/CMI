@@ -1,6 +1,6 @@
 "use client"
 import { SubmitButton } from "../submit-button"
-import { LogSignUp, SignIn} from "../HandleLogin"
+import { LogSignUp, SignIn } from "../HandleLogin"
 import { useEffect, useState } from "react";
 export default function userLogin({
     searchParams,
@@ -11,7 +11,7 @@ export default function userLogin({
         email: "",
         password: "",
     });
-    
+
     const [message, setMessage] = useState<string>(searchParams?.message || "");
 
     const handleLogFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,28 +20,28 @@ export default function userLogin({
             [e.target.name]: e.target.value,
         });
     }
- 
+
 
     const areFieldsNotEmpty = logFields.email !== "" && logFields.password !== ""; //verifica que los inputs no esten vacios
 
     const HandleSignIn = async (formData: FormData) => {
         await SignIn(formData);
-        if (!searchParams?.message) {
-            setMessage("");
-        } else {
-            setMessage(searchParams?.message);
+        const searchParams = new URLSearchParams(window.location.search);
+        const URLmessage = searchParams.get('message');
+        if (URLmessage !== null || URLmessage !== undefined || URLmessage !== "") {
+            setMessage("Could not authenticate user");
         }
     }
-    
+
     useEffect(() => {
-         if(message !== ""){
+        if (message !== "") {
             const timer = setTimeout(() => {
                 setMessage(""); // Limpia el mensaje después de unos instantes
             }, 2000); // Tiempo que aparece el mensaje en mmilisegundos
             return () => clearTimeout(timer); // Limpia el temporizador al desmontar el componente
         }
     }, [message]);
-    
+
 
     return (
         <div>
@@ -67,7 +67,7 @@ export default function userLogin({
                     Registrarse
                 </SubmitButton>
                 {message !== "" && (
-                    
+
                     <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
                         {message}
                     </p>
